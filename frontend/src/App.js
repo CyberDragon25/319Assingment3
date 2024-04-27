@@ -126,8 +126,6 @@ function App() {
             Category: {el.category} <br />
             Price: {el.price} <br />
             Rating: {el.rating} <br />
-            <button onClick={() => updateProduct(el.id)}>Update</button>
-            <button onClick={() => deleteProduct(el.id)}>Delete</button>
         </div>
     ));
 
@@ -138,8 +136,6 @@ function App() {
             Category: {el.category} <br />
             Price: {el.price} <br />
             Rating: {el.rating} <br />
-            <button onClick={() => updateProduct(el.id)}>Update</button>
-            <button onClick={() => deleteProduct(el.id)}>Delete</button>
         </div>
     ));
 
@@ -232,7 +228,7 @@ function App() {
                       <div>
                            <form onSubmit={(e) => {
                         e.preventDefault();
-                        createProduct();
+                        updateProduct(oneProduct.id);
                     }}>
                       <div className="mb-3">
                         <label htmlFor="price" className="form-label">Price:</label>
