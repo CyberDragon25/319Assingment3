@@ -39,7 +39,7 @@ app.get("/products", async (req, res) => {
   try {
     const query = {};
     const results = await db
-    .collection("products")
+    .collection("fakestore_catalog")
     .find(query)
     .limit(100)
     .toArray();
@@ -60,7 +60,7 @@ app.get("/products/:id", async (req, res) => {
   await client.connect();
   console.log("Node connected successfully to GET-id MongoDB");
   const query = {"id": productId };
-  const results = await db.collection("products")
+  const results = await db.collection("fakestore_catalog")
   .findOne(query);
   console.log("Results :", results);
   if (!results) res.send("Not Found").status(404);
@@ -77,11 +77,11 @@ app.post("/addProduct", async (req, res) => {
           "price": parseInt(req.body.price),
           "description": req.body.description,
           "category": req.body.category,
-          "imageUrl": req.body.imageUrl,
+          "image": req.body.imageUrl,
           "rating": {"rate":parseInt(req.body.rating), "count":1}
       };
       const results = await db
-      .collection("products")
+      .collection("fakestore_catalog")
       .insertOne(newDocument);
       res.status(200);
       res.send(results);
@@ -101,7 +101,7 @@ app.delete("/delete/:id", async (req, res) => {
       await client.connect();
       console.log("Product to delete :",id);
       const query = { id: id };
-      const results = await db.collection("products").deleteOne(query);
+      const results = await db.collection("fakestore_catalog").deleteOne(query);
       res.status(200);
       res.send(results);
   }
@@ -126,7 +126,7 @@ app.delete("/delete/:id", async (req, res) => {
     };
     // Add options if needed, for example { upsert: true } to create a document if it doesn't exist
     const options = { };
-    const results = await db.collection("products").updateOne(query, updateData, options);
+    const results = await db.collection("fakestore_catalog").updateOne(query, updateData, options);
     res.status(200);
     res.send(results);
 });

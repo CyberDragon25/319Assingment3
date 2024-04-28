@@ -94,6 +94,7 @@ function App() {
         })
         .then((data) => {
             console.log("Product updated:", data);
+            getAllProducts();
             getOneProduct(id); 
         })
         .catch((error) => {
@@ -109,6 +110,8 @@ function App() {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
+            getAllProducts();
+            setViewingOne(false);
             return response.json();
         })     
         .catch((error) => {
@@ -119,6 +122,7 @@ function App() {
     const showOneItem = oneProduct.map((el) => (
            <div>
               <img src={el.image} width={30} alt="images" /> <br />
+              ID: {el.id} <br />
               Title: {el.title} <br />
               Category: {el.category} <br />
               Price: {el.price} <br />
@@ -129,6 +133,7 @@ function App() {
     const showAllItems = product.map((el) => (
         <div key={el.id}>
             <img src={el.image} width={30} alt="images" /> <br />
+            ID: {el.id} <br />
             Title: {el.title} <br />
             Category: {el.category} <br />
             Price: {el.price} <br />
