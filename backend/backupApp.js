@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 var app = express();
 const { MongoClient, ObjectId } = require("mongodb");
+var nextID = 35;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -65,4 +66,50 @@ app.get("/products/:id", async (req, res) => {
   if (!results) res.send("Not Found").status(404);
   else res.send(results).status(200);
 });
+
+app.post("/addProduct", async (req, res) => {
+  try 
+  {
+      await client.connect();
+      const newDocument = {
+          "id" : nextID++,
+          "title": req.body.title,
+          "price": parseInt(req.body.price),
+          "description": req.body.description,
+          "category": req.body.category,
+          "imageUrl": req.body.imageUrl,
+          "rating": {"rate":parseInt(req.body.rating), "count":1}
+      };
+      const results = await db
+      .collection("products")
+      .insertOne(newDocument);
+      res.status(200);
+      res.send(results);
+  } 
+  catch (error)
+  {
+      console.error("An error occurred:", error);
+      res.status(500).send({ error: 'An internal server error occurred' });
+  }
+ 
+});
+
+app.delete("/delete/:id", async (req, res) => {
+  try
+  {
+      const id = Number(req.params.id);
+      await client.connect();
+      console.log("Product to delete :",id);
+      const query = { id: id };
+      const results = await db.collection("products").deleteOne(query);
+      res.status(200);
+      res.send(results);
+  }
+  catch (error)
+  {
+      console.error("Error deleting robot:", error);
+      res.status(500).send({ message: 'Internal Server Error' });
+  }
+  });
+
 

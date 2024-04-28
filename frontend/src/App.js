@@ -56,7 +56,7 @@ function App() {
     }
 
     function createProduct() {
-        fetch("http://127.0.0.1:4000/catalog", {
+        fetch("http://127.0.0.1:8081/addProduct", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -102,7 +102,7 @@ function App() {
     }
 
     function deleteProduct(id) {
-        fetch(`http://127.0.0.1:8081/product/${id}`, {
+        fetch(`http://127.0.0.1:8081/delete/${id}`, {
             method: "DELETE"
         })
         .then((response) => {
@@ -205,7 +205,7 @@ function App() {
                     </div>
                     <div className="mb-3">
                         <label htmlFor="image" className="form-label">Image URL:</label>
-                        <input type="text" className="form-control" id="image" name="image" placeholder="Image URL" onChange={handleInputChange} />
+                        <input type="text" className="form-control" id="image" name="imageUrl" placeholder="Image URL" onChange={handleInputChange} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="rating" className="form-label">Rating:</label>
@@ -243,8 +243,15 @@ function App() {
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
                     {viewingOne && showOneItem}
-                    {viewingOne && (<button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>)}
-
+                    {viewingOne && (
+                        <button
+                            type="submit"
+                            className="btn btn-danger"
+                            onClick={() => deleteProduct(oneProduct[0].id)}
+                        >
+                            Delete Product
+                        </button>
+                    )}
 
               </div>
             )}
