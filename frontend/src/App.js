@@ -149,19 +149,19 @@ function App() {
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
-                        <a className={`nav-link ${viewer==0 ? 'active' : ''}`} onClick={() => { setViewer(0); setViewingOne(false) }}>All Products</a>
+                        <a className={`nav-link ${viewer==0 ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => { setViewer(0); setViewingOne(false) }}>All Products</a>
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${viewer==1 ? 'active' : ''}`} onClick={() => { setViewer(1); setViewingOne(false) }}>Add Product</a>
+                        <a className={`nav-link ${viewer==1 ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => { setViewer(1); setViewingOne(false) }}>Add Product</a>
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} onClick={() => { setViewer(2); setViewingOne(false) }}>Update Product</a>
+                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => { setViewer(2); setViewingOne(false) }}>Update Product</a>
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} onClick={() => { setViewer(3); setViewingOne(false) }}>Delete Product</a>
+                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => { setViewer(3); setViewingOne(false) }}>Delete Product</a>
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} onClick={() => { setViewer(4); setViewingOne(false)}}>Student Information</a>
+                        <a className={`nav-link ${viewer==2 ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => { setViewer(4); setViewingOne(false)}}>Student Information</a>
                     </li>
                 </ul>
             </div>
@@ -182,7 +182,7 @@ function App() {
             )}
             {viewer==1 && (
                 <div>
-                    <h3>Input product data for edit/create:</h3>
+                    <h3>Input product data to create:</h3>
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         createProduct();
