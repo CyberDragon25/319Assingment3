@@ -182,7 +182,7 @@ function App() {
             )}
             {viewer==1 && (
                 <div>
-                    <h3>Input product data for edit/create:</h3>
+                    <h3>Input product data to create:</h3>
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         createProduct();
