@@ -112,7 +112,6 @@ app.delete("/delete/:id", async (req, res) => {
   }
   });
 
-
   app.put("/update/:id", async (req, res) => {
     const id = Number(req.params.id);
     const query = { id: id };
