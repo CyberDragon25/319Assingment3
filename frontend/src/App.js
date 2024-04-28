@@ -21,7 +21,7 @@ function App() {
     }, []);
 
     function getAllProducts() {
-        fetch("http://127.0.0.1:4000/catalog")
+        fetch("http://127.0.0.1:8081/products")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -38,11 +38,12 @@ function App() {
 
     function getOneProduct(id) {
       setViewingOne(true)
-        console.log(id);
         if (id >= 1 && id <= 20) {
-            fetch(`http://127.0.0.1:4000/catalog/${id}`)
+            fetch(`http://127.0.0.1:8081/products/${id}`)
                 .then((response) => response.json())
                 .then((data) => {
+                  data = [data]
+                  console.log(data);
                     setOneProduct(data);
                 });
         } else {
@@ -101,7 +102,7 @@ function App() {
     }
 
     function deleteProduct(id) {
-        fetch(`http://127.0.0.1:4000/catalog/${id}`, {
+        fetch(`http://127.0.0.1:8081/product/${id}`, {
             method: "DELETE"
         })
         .then((response) => {
@@ -109,23 +110,19 @@ function App() {
                 throw new Error("Network response was not ok");
             }
             return response.json();
-        })
-        .then((data) => {
-            console.log("Product deleted:", data);
-            getAllProducts(); 
-        })
+        })     
         .catch((error) => {
             console.error("Error deleting product:", error);
         });
     }
 
     const showOneItem = oneProduct.map((el) => (
-        <div key={el.id}>
-            <img src={el.image} width={30} alt="images" /> <br />
-            Title: {el.title} <br />
-            Category: {el.category} <br />
-            Price: {el.price} <br />
-            Rating: {el.rating} <br />
+           <div>
+              <img src={el.image} width={30} alt="images" /> <br />
+              Title: {el.title} <br />
+              Category: {el.category} <br />
+              Price: {el.price} <br />
+              Rating: {el.rating.rate} ({el.rating.count} reviews)
         </div>
     ));
 
@@ -135,7 +132,7 @@ function App() {
             Title: {el.title} <br />
             Category: {el.category} <br />
             Price: {el.price} <br />
-            Rating: {el.rating} <br />
+            Rating: {el.rating.rate} ({el.rating.count} reviews)
         </div>
     ));
 
@@ -174,13 +171,13 @@ function App() {
 </div>
         </div>
             {viewer==0 && (
-                <div>
-                    <h3>Show all available Products. Or enter a product ID to view.</h3>
-                    <button onClick={() => {setViewingOne(false);setViewingAll(true);getAllProducts();}}>Show All ...</button>
-                    <input
-                        type="text" id="message" name="message" placeholder="id" onChange={(e) => {setViewingOne(true); setViewingAll(false); getOneProduct(e.target.value);}} />
-                    {showOneItem && viewingOne}
-                    {showAllItems && viewingAll}
+              <div>
+                <h3>Show all available Products. Or enter a product ID to view.</h3>
+                <button onClick={() => { setViewingOne(false); setViewingAll(true); getAllProducts(); }}>Show All ...</button>
+                <input
+                    type="text" id="message" name="message" placeholder="id" onChange={(e) => { setViewingOne(true); setViewingAll(false); getOneProduct(e.target.value); }} />
+                {viewingOne && showOneItem}
+                {viewingAll && showAllItems}
                 </div>
             )}
             {viewer==1 && (
@@ -223,7 +220,7 @@ function App() {
                     <h3>Select an item to update:</h3>
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
-                    {showOneItem}
+                    {viewingOne && showOneItem}
                     {viewingOne && (
                       <div>
                            <form onSubmit={(e) => {
@@ -245,8 +242,8 @@ function App() {
                 <h3>Select an item's id to delete:</h3>
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
-                    {showOneItem}
-                    <button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>
+                    {viewingOne && showOneItem}
+                    {viewingOne && (<button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>)}
 
 
               </div>

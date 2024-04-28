@@ -38,10 +38,10 @@ app.get("/products", async (req, res) => {
   try {
     const query = {};
     const results = await db
-      .collection("products")
-      .find(query)
-      .limit(100)
-      .toArray();
+    .collection("products")
+    .find(query)
+    .limit(100)
+    .toArray();
     console.log(results);
     res.status(200);
     res.send(results);
@@ -58,9 +58,11 @@ app.get("/products/:id", async (req, res) => {
   console.log("Product to find :", productId);
   await client.connect();
   console.log("Node connected successfully to GET-id MongoDB");
-  const query = { id: productId };
-  const results = await db.collection("products").findOne(query);
+  const query = {"id": productId };
+  const results = await db.collection("products")
+  .findOne(query);
   console.log("Results :", results);
   if (!results) res.send("Not Found").status(404);
   else res.send(results).status(200);
 });
+
