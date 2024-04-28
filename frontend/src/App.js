@@ -79,7 +79,7 @@ function App() {
     }
 
     function updateProduct(id) {
-        fetch(`http://127.0.0.1:4000/catalog/${id}`, {
+        fetch(`http://127.0.0.1:8081/update/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -94,7 +94,7 @@ function App() {
         })
         .then((data) => {
             console.log("Product updated:", data);
-            getAllProducts(); 
+            getOneProduct(id); 
         })
         .catch((error) => {
             console.error("Error updating product:", error);
@@ -225,7 +225,7 @@ function App() {
                       <div>
                            <form onSubmit={(e) => {
                         e.preventDefault();
-                        updateProduct(oneProduct.id);
+                        updateProduct(oneProduct[0].id);
                     }}>
                       <div className="mb-3">
                         <label htmlFor="price" className="form-label">Price:</label>

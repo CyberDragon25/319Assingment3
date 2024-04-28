@@ -1,18 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { MongoClient } = require("mongodb");
-
-const app = express();
+var app = express();
+const { MongoClient, ObjectId } = require("mongodb");
+var nextID = 35;
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB
 const url = "mongodb://localhost:27017";
-const dbName = "secoms319";
-const client = new MongoClient(url, { useUnifiedTopology: true });
-let db;
+const dbName = "reactdata";
+const client = new MongoClient(url);
+const db = client.db(dbName);
 
 // Connect to MongoDB
 client.connect((err) => {
@@ -24,6 +24,9 @@ client.connect((err) => {
   db = client.db(dbName);
 });
 
+app.use(cors());
+app.use(bodyParser.json());
+
 const port = 8081;
 
 app.listen(port, () => {
@@ -32,10 +35,17 @@ app.listen(port, () => {
 
 // Get all products
 app.get("/products", async (req, res) => {
+  await client.connect();
   try {
-    const results = await db.collection("products").find().toArray();
+    const query = {};
+    const results = await db
+    .collection("products")
+    .find(query)
+    .limit(100)
+    .toArray();
     console.log(results);
-    res.status(200).json(results);
+    res.status(200);
+    res.send(results);
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -44,76 +54,80 @@ app.get("/products", async (req, res) => {
 
 // Get product by ID
 app.get("/products/:id", async (req, res) => {
+  console.log("its getting here");
   const productId = Number(req.params.id);
   console.log("Product to find :", productId);
-  try {
-    const query = { id: productId };
-    const result = await db.collection("products").findOne(query);
-    if (!result) {
-      res.status(404).send("Not Found");
-    } else {
-      res.status(200).json(result);
-    }
-  } catch (error) {
-    console.error("Error fetching product:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+  await client.connect();
+  console.log("Node connected successfully to GET-id MongoDB");
+  const query = {"id": productId };
+  const results = await db.collection("products")
+  .findOne(query);
+  console.log("Results :", results);
+  if (!results) res.send("Not Found").status(404);
+  else res.send(results).status(200);
 });
 
-app.post("/insert", async (req, res) => {
-  console.log(req.body);
-  const p_id = req.body._id;
-  const ptitle = req.body.title;
-  const pprice = req.body.price;
-  const pdescription = req.body.description;
-  const pcategory = req.body.category;
-  const pimage = req.body.image;
-  const prate = req.body.rating.rate;
-  const pcount = req.body.rating.count;
+app.post("/addProduct", async (req, res) => {
+  try 
+  {
+      await client.connect();
+      const newDocument = {
+          "id" : nextID++,
+          "title": req.body.title,
+          "price": parseInt(req.body.price),
+          "description": req.body.description,
+          "category": req.body.category,
+          "imageUrl": req.body.imageUrl,
+          "rating": {"rate":parseInt(req.body.rating), "count":1}
+      };
+      const results = await db
+      .collection("products")
+      .insertOne(newDocument);
+      res.status(200);
+      res.send(results);
+  } 
+  catch (error)
+  {
+      console.error("An error occurred:", error);
+      res.status(500).send({ error: 'An internal server error occurred' });
+  }
+ 
+});
 
-  const formData = new Product({
-    _id: p_id,
-    title: ptitle,
-    price: pprice,
-    description: pdescription,
-    category: pcategory,
-    image: pimage,
-    rating: { rate: prate, count: pcount },
+app.delete("/delete/:id", async (req, res) => {
+  try
+  {
+      const id = Number(req.params.id);
+      await client.connect();
+      console.log("Product to delete :",id);
+      const query = { id: id };
+      const results = await db.collection("products").deleteOne(query);
+      res.status(200);
+      res.send(results);
+  }
+  catch (error)
+  {
+      console.error("Error deleting robot:", error);
+      res.status(500).send({ message: 'Internal Server Error' });
+  }
   });
-  try {
-    // await formData.save();
-    await Product.create(formData);
-    const messageResponse = { message: `Product ${p_id} added correctly` };
-    res.send(JSON.stringify(messageResponse));
-  } catch (err) {
-    console.log("Error while adding a new product:" + err);
-  }
-});
 
-app.delete("/delete", async (req, res) => {
-  console.log("Delete :", req.body);
-  try {
-    const query = { _id: req.body._id };
-    await Product.deleteOne(query);
-    const messageResponse = {
-      message: `Product ${req.body._id} deleted correctly`,
-    };
-    res.send(JSON.stringify(messageResponse));
-  } catch (err) {
-    console.log("Error while deleting :" + p_id + " " + err);
-  }
-});
 
-app.put("/update", async (req, res) => {
-  try {
-    const updatedProduct = req.body;
-    const query = { _id: updatedProduct._id };
-    await Product.findOneAndUpdate(query, updatedProduct, { new: true });
-    const messageResponse = {
-      message: `Product ${updatedProduct._id} updated correctly`,
+  app.put("/update/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    const query = { id: id };
+    await client.connect();
+    console.log("Robot to Update :",id);
+    // Data for updating the document, typically comes from the request body
+    console.log(req.body);
+    const updateData = {
+        $set:{
+            "price": parseInt(req.body.price),
+        }
     };
-    res.send(JSON.stringify(messageResponse));
-  } catch (err) {
-    console.log("Error while updating product: " + err);
-  }
+    // Add options if needed, for example { upsert: true } to create a document if it doesn't exist
+    const options = { };
+    const results = await db.collection("products").updateOne(query, updateData, options);
+    res.status(200);
+    res.send(results);
 });
