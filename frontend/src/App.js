@@ -243,7 +243,7 @@ function App() {
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
                     {viewingOne && showOneItem}
-                    <button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>
+                    {viewingOne && (<button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>)}
 
 
               </div>
