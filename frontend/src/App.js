@@ -220,7 +220,7 @@ function App() {
                     <h3>Select an item to update:</h3>
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
-                    {showOneItem}
+                    {viewingOne && showOneItem}
                     {viewingOne && (
                       <div>
                            <form onSubmit={(e) => {
@@ -242,7 +242,7 @@ function App() {
                 <h3>Select an item's id to delete:</h3>
                     <input
                         type="text" id="message" name="message" placeholder="id" onChange={(e) => getOneProduct(e.target.value)} />
-                    {showOneItem}
+                    {viewingOne && showOneItem}
                     <button type="submit" className="btn btn-danger" onClick={deleteProduct(oneProduct.id)}>Delete Product</button>
 
 
